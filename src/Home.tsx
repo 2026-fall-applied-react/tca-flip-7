@@ -1,22 +1,28 @@
 import { useNavigate } from "react-router";
 import type { LeaderboardEntry } from "./GameResults";
+import { useEffect } from "react";
+
+export const APP_NAME = "Flip 7 Companion";
 
 type HomeProps = {
     leaderboardData: LeaderboardEntry[];
+    setTitle: (t: string) => void;
 };
 
 export const Home: React.FC<HomeProps> = ({
     leaderboardData,
+    setTitle,
 }) => {
+
+    useEffect(
+        () => setTitle(APP_NAME),
+        [],
+    );
 
     const nav = useNavigate();
 
     return (
         <div>
-            <h1>
-                Home
-            </h1>
-
             <button
                 className="btn btn-soft btn-lg mt-3"
                 onClick={

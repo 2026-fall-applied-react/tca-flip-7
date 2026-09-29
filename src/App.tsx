@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
 } from 'react-router'
-import { Home } from './Home'
+import { APP_NAME, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
 import { getLeaderboard, type GameResult } from './GameResults'
@@ -45,8 +45,16 @@ const dummyGameResults: GameResult[] = [
 
 const App = () => {
 
+  //
+  // react hooks, state, effect, b, b, blah
+  //
   const [gameResults, setGameResults] = useState(dummyGameResults);
 
+  const [title, setTitle] = useState(APP_NAME);
+
+  //
+  // helper funcs and calculated, derived state...
+  //
   const addNewGameResult = (newResult: GameResult) => setGameResults(
     [
       ...gameResults,
@@ -54,10 +62,13 @@ const App = () => {
     ]
   );
 
+  //
+  // return jsx
+  //
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm m-0">
-        <a className="text-xl font-bold">Flip 7 Companion</a>
+        <p className="text-xl font-bold">{title}</p>
       </div>
       <div
         className='p-3'
@@ -68,6 +79,9 @@ const App = () => {
               path='/'
               element={
                 <Home
+                  setTitle={
+                    setTitle
+                  }
                   leaderboardData={
                     getLeaderboard(gameResults)
                   }
@@ -77,13 +91,20 @@ const App = () => {
             <Route
               path='/setup'
               element={
-                <Setup />
+                <Setup 
+                  setTitle={
+                    setTitle
+                  }
+                />
               }
             />
             <Route
               path='/play'
               element={
                 <Play
+                  setTitle={
+                    setTitle
+                  }
                   addNewGameResult={addNewGameResult}
                 />
               }
