@@ -22,7 +22,7 @@ export const Play: React.FC<PlayProps> = ({
     return (
         <div>
             <button 
-                className="btn btn-soft btn-lg mt-3"
+                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 onClick={
                     () => {
                         addNewGameResult(
