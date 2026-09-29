@@ -1,6 +1,13 @@
 import { useNavigate } from "react-router";
+import type { LeaderboardEntry } from "./GameResults";
 
-export const Home = () => {
+type HomeProps = {
+    leaderboardData: LeaderboardEntry[];
+};
+
+export const Home: React.FC<HomeProps> = ({
+    leaderboardData,
+}) => {
 
     const nav = useNavigate();
 
@@ -36,12 +43,16 @@ export const Home = () => {
                             </thead>
                             <tbody>
                                 {
-                                    <tr>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>0.500</td>
-                                        <td>Tom</td>
-                                    </tr>
+                                    leaderboardData.map(
+                                        x => (
+                                            <tr>
+                                                <td>{x.wins}</td>
+                                                <td>{x.losses}</td>
+                                                <td>{x.avg.toFixed(3)}</td>
+                                                <td>{x.player}</td>
+                                            </tr>
+                                        )
+                                    )
                                 }
                             </tbody>
                         </table>

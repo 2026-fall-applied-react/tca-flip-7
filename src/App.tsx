@@ -7,7 +7,8 @@ import {
 import { Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import type { GameResult } from './GameResults'
+import { getLeaderboard, type GameResult } from './GameResults'
+import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
     {
@@ -44,6 +45,8 @@ const dummyGameResults: GameResult[] = [
 
 const App = () => {
 
+  const [gameResults, setGameResults] = useState(dummyGameResults);
+  
   return (
     <div
       className='p-3'
@@ -53,7 +56,11 @@ const App = () => {
           <Route
             path='/'
             element={
-              <Home />
+              <Home 
+                leaderboardData={
+                  getLeaderboard(gameResults)
+                }
+              />
             } 
           />
           <Route
