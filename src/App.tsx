@@ -47,6 +47,13 @@ const App = () => {
 
   const [gameResults, setGameResults] = useState(dummyGameResults);
   
+  const addNewGameResult = (newResult: GameResult) => setGameResults(
+    [
+      ...gameResults,
+      newResult,
+    ]
+  );
+
   return (
     <div
       className='p-3'
@@ -72,7 +79,9 @@ const App = () => {
           <Route
             path='/play'
             element={
-              <Play />
+              <Play 
+                addNewGameResult={addNewGameResult}
+              />
             } 
           />
         </Routes>
