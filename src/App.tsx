@@ -7,7 +7,8 @@ import {
 import { Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import type { GameResult } from './GameResults'
+import { getLeaderboard, type GameResult } from './GameResults'
+import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
     {
@@ -45,6 +46,21 @@ const dummyGameResults: GameResult[] = [
 
 const App = () => {
 
+  //
+  // react hooks, e.g. useState, useEffect, use*
+  //
+
+  // const [gameResults, setGameResults] = useState<GameResult[]>([]);
+  const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
+
+  //
+  // derived or calculated state and helper funcs
+  //
+
+
+  //
+  // returns jsx
+  //
   return (
     <div
       className='p-3'
@@ -54,7 +70,11 @@ const App = () => {
           <Route
             path='/'
             element={
-              <Home />
+              <Home 
+                leaderboard={
+                  getLeaderboard(gameResults)
+                }
+              />
             } 
           />
           <Route
