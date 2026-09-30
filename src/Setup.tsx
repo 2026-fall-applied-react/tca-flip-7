@@ -3,10 +3,12 @@ import { useNavigate } from "react-router";
 
 type SetupProps = {
     setTitle: (t: string) => void;
+    previousPlayers: string[];
 };
 
 export const Setup: React.FC<SetupProps> = ({
     setTitle,
+    previousPlayers,
 }) => {
 
     useEffect(
@@ -26,6 +28,19 @@ export const Setup: React.FC<SetupProps> = ({
             >
                 Play the Game
             </button>
+            <ul
+                className="list-disc ml-3 mt-3"
+            >
+                {
+                    previousPlayers.map(
+                        x => (
+                            <li>
+                                {x}
+                            </li>
+                        )
+                    )
+                }
+            </ul>
         </div>
     );
 };

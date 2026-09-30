@@ -7,7 +7,7 @@ import {
 import { APP_NAME, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getLeaderboard, type GameResult } from './GameResults'
+import { getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
 import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
@@ -94,6 +94,9 @@ const App = () => {
                 <Setup 
                   setTitle={
                     setTitle
+                  }
+                  previousPlayers={
+                    getPreviousPlayers(gameResults)
                   }
                 />
               }
