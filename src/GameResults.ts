@@ -144,23 +144,20 @@ export const getBustPercent = (
 // card already drawn by any player in this game (single shared deck)
 const getRemainingDeck = (
     game: GameResult,
-): Record<FlipSevenCard, number> => {
-
-    const remainingDeck = {
-        ...DECK_COMPOSITION,
-    };
-
-    (game.playerCardsDrawn ?? []).forEach(
-        x => x.cardsDrawn.forEach(
-            card => remainingDeck[card] = Math.max(
+): Record<FlipSevenCard, number> => (game.playerCardsDrawn ?? [])
+    .flatMap(
+        x => x.cardsDrawn
+    )
+    .reduce(
+        (deck, card) => ({
+            ...deck,
+            [card]: Math.max(
                 0,
-                remainingDeck[card] - 1,
-            )
-        )
+                deck[card] - 1,
+            ),
+        }),
+        { ...DECK_COMPOSITION },
     );
-
-    return remainingDeck;
-};
 
 // unique number cards (0-12) a player currently holds, these are the
 // cards that would bust the player if drawn again
