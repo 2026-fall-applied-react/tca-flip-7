@@ -230,7 +230,8 @@ const getPreviousPlayers = (
 //
 
 // fresh deck, Harry holds 3 and 7, nobody else has drawn anything yet
-// expect bust % = (remaining 3s + remaining 7s) / 94 = (3 + 7) / 94
+// expect bust % = (remaining 3s + remaining 7s) / totalRemaining
+//               = (2 + 6) / (94 - 2) = 8 / 92
 export const mockGameFreshDeck: GameResult = {
     winner: "",
     players: [
@@ -252,7 +253,7 @@ export const mockGameFreshDeck: GameResult = {
 // deck has been drawn into by both players, Harry holds 3 and 7, and
 // one of the remaining 7s has already been drawn by Ron
 // expect bust % = (remaining 3s + remaining 7s) / totalRemaining
-//               = (3 + 6) / (94 - 2) = 9 / 92
+//               = (2 + 5) / (94 - 4) = 7 / 90
 export const mockGamePartialDeck: GameResult = {
     winner: "",
     players: [

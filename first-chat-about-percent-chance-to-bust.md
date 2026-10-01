@@ -132,6 +132,50 @@ Added Prompts 9–11 (the "stop, ill verify things" / "save the tokens" / "yes a
 
 ---
 
+## Prompt 12
+
+> now, don't go crazy, but what might a minimal unit testing framework be here, vite test or something lighter, just to test gameresults, maybe just to test new bust percent stuff, don't worry about other stuff...
+
+### Response
+
+Laid out the options lightest → heaviest: Node's built-in `node --test` (zero deps, but TS support is bleeding-edge), **Vitest** (the natural fit — one dev dep, reuses the existing Vite setup, zero config), and `node:test` + `tsx` (two deps, more moving parts). Recommended Vitest and sketched a sample test using the mock games.
+
+---
+
+## Prompt 13
+
+> does "fresh deck" in those tests mean, new minus the cards being held?
+
+### Response
+
+Caught a bug in the mock comments: "fresh deck" means nobody has drawn yet, but the player's own held cards still left the deck. Correct math for `mockGameFreshDeck` is `(2 + 6) / 92 = 8/92`, not `10/94`; for `mockGamePartialDeck` it's `(2 + 5) / 90 = 7/90`, not `9/92`. The implementation was correct — the comments were wrong.
+
+---
+
+## Prompt 14
+
+> Start implementation
+
+### Response
+
+- Fixed the incorrect bust % comments in `src/GameResults.ts` mocks (`10/94` → `8/92`, `9/92` → `7/90`).
+- Installed Vitest (`npm i -D vitest`, v5.0.3).
+- Created `src/GameResults.test.ts` with 5 tests: player not in game → 0, no cards drawn → 0, fresh deck → `8/92`, partial deck → `7/90`, exhausted deck → 0 (built programmatically from `DECK_COMPOSITION`, which also validates the deck sums to 94).
+- Added `"test": "vitest run"` to `package.json`.
+- Verified: `npm test` → 5/5 passed; `npm run build` → clean; no type errors.
+
+---
+
+## Prompt 15
+
+> ill look later, but update md now
+
+### Response
+
+Added Prompts 12–15 (the Vitest discussion, the "fresh deck" correction, the test implementation, and this update) to this file.
+
+---
+
 ## Short Summary
 
-Added a deck-counts model (`DECK_COMPOSITION`) and a pure `getBustPercent(game, player)` function to `GameResults.ts` that calculates the odds a player's next card busts them (draws a number they already hold), accounting for all cards drawn so far from the shared deck. Made `playerCardsDrawn` optional, added mock data for verification, and confirmed the project builds cleanly. Later refactored `getRemainingDeck` from nested `forEach` loops to a denser `flatMap` + `reduce` chain.
+Added a deck-counts model (`DECK_COMPOSITION`) and a pure `getBustPercent(game, player)` function to `GameResults.ts` that calculates the odds a player's next card busts them (draws a number they already hold), accounting for all cards drawn so far from the shared deck. Made `playerCardsDrawn` optional, added mock data for verification, and confirmed the project builds cleanly. Later refactored `getRemainingDeck` from nested `forEach` loops to a denser `flatMap` + `reduce` chain. Added Vitest with 5 passing unit tests for `getBustPercent`, and corrected the expected bust % values in the mock comments (the player's own held cards shrink the deck).
