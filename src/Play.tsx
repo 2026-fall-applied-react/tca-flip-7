@@ -1,22 +1,37 @@
 import { useNavigate } from "react-router";
 import type { GameResult } from "./GameResults";
+import { useEffect } from "react";
 
 type PlayProps = {
     addNewGameResult: (r: GameResult) => void;
+    setTitle: (t: string) => void;
 };
 
 export const Play: React.FC<PlayProps> = ({
     addNewGameResult,
+    setTitle,
 }) => {
+
+    //
+    // react hooks...
+    //
+    useEffect(
+        () => setTitle("Play"),
+        [],
+    );
+
 
     const nav = useNavigate();
 
+    //
+    // calculated state...
+    //
+
+    //
+    // return jsx...
+    //
     return (
         <div>
-            <h1>
-                Play
-            </h1>
-
             <button 
                 className="btn btn-soft btn-lg mt-3"
                 onClick={

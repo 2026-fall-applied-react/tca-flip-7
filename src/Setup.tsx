@@ -1,15 +1,23 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
-export const Setup = () => {
+type SetupProps = {
+    setTitle: (t: string) => void;
+};
+
+export const Setup: React.FC<SetupProps> = ({
+    setTitle,
+}) => {
+
+    useEffect(
+        () => setTitle("Setup"),
+        [],
+    );
 
     const nav = useNavigate();
 
     return (
         <div>
-            <h1>
-                Setup
-            </h1>
-
             <button 
                 className="btn btn-soft btn-lg mt-3"
                 onClick={
