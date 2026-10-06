@@ -50,8 +50,8 @@ const App = () => {
   // react hooks, e.g. useState, useEffect, use*
   //
 
-  // const [gameResults, setGameResults] = useState<GameResult[]>([]);
-  const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
+  const [gameResults, setGameResults] = useState<GameResult[]>([]);
+  // const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
 
   const [title, setTitle] = useState(APP_TITLE);
 
