@@ -7,7 +7,7 @@ import {
 import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getLeaderboard, type GameResult } from './GameResults'
+import { getGeneralFacts, getLeaderboard, type GameResult } from './GameResults'
 import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
@@ -18,6 +18,8 @@ const dummyGameResults: GameResult[] = [
       "Bryson",
       "Tom",
     ],
+    start: "2026-10-06T12:30:00.123Z",
+    end: "2026-10-06T12:58:12.123Z",
   },
   {
     winner: "Bryson",
@@ -26,13 +28,17 @@ const dummyGameResults: GameResult[] = [
       "Tom",
       "Suzzie",
     ],
+    start: "2026-10-06T12:30:00.123Z",
+    end: "2026-10-06T12:58:12.123Z",
   },
   {
     winner: "Zack",
     players: [
       "Zack",
       "Suzzie",
-    ]
+    ],
+    start: "2026-10-06T12:30:00.123Z",
+    end: "2026-10-06T12:58:12.123Z",
   },
   {
     winner: "John",
@@ -40,6 +46,8 @@ const dummyGameResults: GameResult[] = [
       "John",
       "Tom",
     ],
+    start: "2026-10-06T12:30:00.123Z",
+    end: "2026-10-06T12:58:12.123Z",
   },
 ];
 
@@ -50,8 +58,8 @@ const App = () => {
   // react hooks, e.g. useState, useEffect, use*
   //
 
-  const [gameResults, setGameResults] = useState<GameResult[]>([]);
-  // const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
+  // const [gameResults, setGameResults] = useState<GameResult[]>([]);
+  const [gameResults, setGameResults] = useState<GameResult[]>(dummyGameResults);
 
   const [title, setTitle] = useState(APP_TITLE);
 
@@ -87,6 +95,9 @@ const App = () => {
                   }
                   setTitle={
                     setTitle
+                  }
+                  generalFacts={
+                    getGeneralFacts(gameResults)
                   }
                 />
               }
