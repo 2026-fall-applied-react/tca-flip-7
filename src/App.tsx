@@ -79,20 +79,13 @@ const App = () => {
   // returns jsx
   //
   return (
-    <div className="min-h-screen bg-base-200 text-base-content">
+    <div className="min-h-screen bg-base-100 text-base-content">
       <header className="navbar border-b border-base-300 bg-base-100 px-4 shadow-sm sm:px-6">
-        <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
-          <span className="flip-mark" aria-hidden="true">7</span>
-          <div>
-            <p className="text-xl font-black tracking-tight">{title}</p>
-            <p className="text-xs font-bold tracking-[0.18em] text-base-content/60">
-              THE CARD GAME COMPANION
-            </p>
-          </div>
+        <div className="mx-auto w-full max-w-4xl">
+          <p className="text-xl font-black tracking-tight">{title}</p>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-4xl p-4 sm:p-8">
-        <div className="app-panel">
+      <main className="mx-auto min-h-[24rem] w-full max-w-4xl p-4 sm:p-8">
         <HashRouter>
           <Routes>
             <Route
@@ -145,7 +138,6 @@ const App = () => {
             />
           </Routes>
         </HashRouter>
-        </div>
       </main>
     </div>
   )

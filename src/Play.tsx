@@ -42,7 +42,7 @@ export const Play: React.FC<PlayProps> = ({
                 currentPlayers.map(
                     x => (
                         <button 
-                            className="btn btn-primary btn-lg mt-3 w-full lg:w-64"
+                            className="btn btn-primary btn-lg mt-3 w-full font-bold lg:w-64"
                             onClick={
                                 () => {
                                     addNewGameResult({

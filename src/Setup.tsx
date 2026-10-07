@@ -34,7 +34,7 @@ export const Setup: React.FC<SetupProps> = ({
     return (
         <div>
             <button 
-                className="btn btn-primary btn-lg mt-3 w-full lg:w-64"
+                className="btn btn-primary btn-lg mt-3 w-full font-bold lg:w-64"
                 onClick={
                     () => {
                         setCurrentPlayers(
