@@ -35,7 +35,7 @@ export const Home: React.FC<HomeProps> = ({
     // return jsx...
     //
     return (
-        <div>
+        <div className="space-y-10">
             <button
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 onClick={
@@ -44,98 +44,92 @@ export const Home: React.FC<HomeProps> = ({
             >
                 Setup a Game
             </button>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
-                        General Facts
-                    </h2>
-                    <div className="overflow-x-auto">
-                        <table className="table table-zebra">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        Last played
-                                    </td>
-                                    <th>
-                                        {generalFacts.lastPlayed}
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Total games
-                                    </td>
-                                    <th>
-                                        {generalFacts.totalGames}
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Shortest game
-                                    </td>
-                                    <th>
-                                        {generalFacts.shortestGame}
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Longest game
-                                    </td>
-                                    <th>
-                                        {generalFacts.longestGame}
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <section>
+                <h2 className="mb-3 text-2xl font-black uppercase tracking-wide">
+                    General Facts
+                </h2>
+                <div className="overflow-x-auto">
+                    <table className="table table-zebra">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Last played
+                                </td>
+                                <th>
+                                    {generalFacts.lastPlayed}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Total games
+                                </td>
+                                <th>
+                                    {generalFacts.totalGames}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Shortest game
+                                </td>
+                                <th>
+                                    {generalFacts.shortestGame}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Longest game
+                                </td>
+                                <th>
+                                    {generalFacts.longestGame}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
-                        Leaderboard
-                    </h2>
-                    {
-                        lb.length === 0
-                            ? (
-                                <p
-                                    className="ml-3 mb-5"
-                                >
-                                    Setup & play a game to see the leaderboard...
-                                </p>
-                            )
-                            : (
-                                <div className="overflow-x-auto">
-                                    <table className="table table-zebra">
-                                        <thead>
-                                            <tr>
-                                                <th>W</th>
-                                                <th>L</th>
-                                                <th>AVG</th>
-                                                <th>PLAYER</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                lb.map(
-                                                    x => (
-                                                        <tr
-                                                            key={x.player}
-                                                        >
-                                                            <td>{x.wins}</td>
-                                                            <td>{x.losses}</td>
-                                                            <td>{x.avg.toFixed(3)}</td>
-                                                            <td>{x.player}</td>
-                                                        </tr>
-                                                    )
+            </section>
+            <section className="border-t border-base-content/20 pt-6">
+                <h2 className="mb-3 text-2xl font-black uppercase tracking-wide">
+                    Leaderboard
+                </h2>
+                {
+                    lb.length === 0
+                        ? (
+                            <p className="py-4">
+                                Setup & play a game to see the leaderboard...
+                            </p>
+                        )
+                        : (
+                            <div className="overflow-x-auto">
+                                <table className="table table-zebra">
+                                    <thead>
+                                        <tr>
+                                            <th>W</th>
+                                            <th>L</th>
+                                            <th>AVG</th>
+                                            <th>PLAYER</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            lb.map(
+                                                x => (
+                                                    <tr
+                                                        key={x.player}
+                                                    >
+                                                        <td>{x.wins}</td>
+                                                        <td>{x.losses}</td>
+                                                        <td>{x.avg.toFixed(3)}</td>
+                                                        <td>{x.player}</td>
+                                                    </tr>
                                                 )
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )
-                    }
-                </div>
-            </div>
+                                            )
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                }
+            </section>
         </div>
     );
 };
