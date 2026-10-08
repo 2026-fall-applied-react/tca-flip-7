@@ -7,42 +7,49 @@ import {
 import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getLeaderboard, type GameResult } from './GameResults'
+import { getGeneralFacts, getLeaderboard, type GameResult } from './GameResults'
 import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
-  {
-    winner: "Bryson",
-    players: [
-      "Zack",
-      "Bryson",
-      "Tom",
-    ],
-  },
-  {
-    winner: "Bryson",
-    players: [
-      "Bryson",
-      "Tom",
-      "Suzzie",
-    ],
-  },
-  {
-    winner: "Zack",
-    players: [
-      "Zack",
-      "Suzzie",
-    ]
-  },
-  {
-    winner: "John",
-    players: [
-      "John",
-      "Tom",
-    ],
-  },
+    {
+        winner: "Bryson",
+        players: [
+            "Zack",
+            "Bryson",
+            "Tom",
+        ],
+        start: "2026-10-03T22:56:41.883Z",
+        end: "2026-10-03T23:06:59.883Z",        
+    },
+    {
+        winner: "Bryson",
+        players: [
+            "Bryson",
+            "Tom",
+            "Suzzie",
+        ],
+        start: "2026-10-03T22:56:41.883Z",
+        end: "2026-10-03T23:06:59.883Z",    
+    },
+    {
+        winner: "Zack",
+        players: [
+            "Zack",
+            "Suzzie",
+        ],
+        start: "2026-10-03T22:56:41.883Z",
+        end: "2026-10-03T23:06:59.883Z",            
+    },
+    {
+        winner: "John",
+        players: [
+            "John",
+            "Tom",
+        ],
+        start: "2026-10-05T22:56:41.883Z",
+        end: "2026-10-05T23:16:02.883Z",        
+    },
 ];
-
 
 const App = () => {
 
@@ -87,6 +94,9 @@ const App = () => {
                   }
                   setTitle={
                     setTitle
+                  }
+                  generalFacts={
+                    getGeneralFacts(gameResults)
                   }
                 />
               }
