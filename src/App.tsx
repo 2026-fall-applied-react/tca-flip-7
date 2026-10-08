@@ -7,7 +7,7 @@ import {
 import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getGeneralFacts, getLeaderboard, type GameResult } from './GameResults'
+import { getGeneralFacts, getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
 import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
@@ -62,6 +62,8 @@ const App = () => {
 
   const [title, setTitle] = useState(APP_TITLE);
 
+  const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
+
   //
   // derived or calculated state and helper funcs
   //
@@ -108,6 +110,12 @@ const App = () => {
                   setTitle={
                     setTitle
                   }
+                  previousPlayers={
+                    getPreviousPlayers(gameResults)
+                  }
+                  setCurrentPlayers={
+                    setCurrentPlayers
+                  }
                 />
               }
             />
@@ -120,6 +128,9 @@ const App = () => {
                   }
                   setTitle={
                     setTitle
+                  }
+                  currentPlayers={
+                    currentPlayers
                   }
                 />
               }
