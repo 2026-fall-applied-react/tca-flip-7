@@ -125,7 +125,7 @@ export const Home: React.FC<HomeProps> = ({
             <div className="card w-full bg-base-100 card-md shadow-lg my-5">
                 <div className="card-body p-0">
                     <h2 className="card-title ml-3 mt-3">
-                        Game durations
+                        Game Durations
                     </h2>
                     {
                         gameDurations.length === 0
