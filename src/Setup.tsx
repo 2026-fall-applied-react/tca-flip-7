@@ -46,7 +46,9 @@ export const Setup: React.FC<SetupProps> = ({
     // return jsx
     //
     return (
-        <div>
+        <div
+            className="flex flex-col"
+        >
             <button 
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 onClick={
@@ -73,6 +75,19 @@ export const Setup: React.FC<SetupProps> = ({
                         : `Play with ${chosenPlayerCount} player${chosenPlayerCount === 1 ? '' : 's'}`
                 }
             </button>
+            <div 
+                className="join w-full lg:w-96 bg-primary123 mt-3"
+            >
+                <input 
+                    className="input input-lg join-item w-full" 
+                    placeholder="Enter player name" 
+                />
+                <button 
+                    className="btn btn-lg join-item rounded-r-full"
+                >
+                    Add
+                </button>
+            </div>
             {
                 availablePlayers.map(
                     x => (
