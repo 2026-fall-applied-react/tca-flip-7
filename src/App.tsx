@@ -7,7 +7,7 @@ import {
 import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getGeneralFacts, getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
+import { getGameDurationsByPlayerCount, getGeneralFacts, getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
 import { useState } from 'react'
 
 const dummyGameResults: GameResult[] = [
@@ -99,6 +99,9 @@ const App = () => {
                   }
                   generalFacts={
                     getGeneralFacts(gameResults)
+                  }
+                  gameDurations={
+                    getGameDurationsByPlayerCount(gameResults)
                   }
                 />
               }
