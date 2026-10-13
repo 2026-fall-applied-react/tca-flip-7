@@ -37,7 +37,9 @@ export const Play: React.FC<PlayProps> = ({
     // return jsx...
     //
     return (
-        <div>
+        <div
+            className="flex flex-col"
+        >
             {
                 currentPlayers.map(
                     x => (
