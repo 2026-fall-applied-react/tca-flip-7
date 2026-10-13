@@ -44,6 +44,9 @@ export const Play: React.FC<PlayProps> = ({
                 currentPlayers.map(
                     x => (
                         <button 
+                            key={
+                                x
+                            }
                             className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                             onClick={
                                 () => {

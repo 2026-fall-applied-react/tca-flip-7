@@ -28,6 +28,8 @@ export const Setup: React.FC<SetupProps> = ({
         )
     );
 
+    const [newPlayerName, setNewPlayerName] = useState("");
+
     useEffect(
         () => setTitle("Setup"),
         [],
@@ -41,6 +43,52 @@ export const Setup: React.FC<SetupProps> = ({
     const chosenPlayerCount = availablePlayers.filter(
         x => x.checked
     ).length;
+
+    const validateAndAddPlayer = () => {
+
+        // check for dupe
+        const dupe = availablePlayers.find(
+            x => x.name.toUpperCase() === newPlayerName.toUpperCase()
+        );
+
+        // add if not dupe
+        // if (dupe === undefined) {
+        //     setAvailablePlayers();
+        // }
+
+        // // otherwise, just check it
+        // else {
+        //     setAvailablePlayers();
+        // }
+
+        // both gonna call setAvailablePlayers... a better way ! ! !
+        setAvailablePlayers(
+            prev => [
+                ...prev.map(
+                    p => p === dupe 
+                            ? { 
+                                ...p, 
+                                checked: true,
+                            } 
+                            : p
+                ),
+            ...(
+                dupe 
+                    ? [] 
+                    : [
+                        { 
+                            name: newPlayerName, 
+                            checked: true,
+                        }
+                    ]
+            )
+        ]);
+
+        // clear out the new player name
+        setNewPlayerName(
+            ""
+        );
+    };
 
     //
     // return jsx
@@ -81,9 +129,23 @@ export const Setup: React.FC<SetupProps> = ({
                 <input 
                     className="input input-lg join-item w-full" 
                     placeholder="Enter player name" 
+                    value={
+                        newPlayerName
+                    }
+                    onChange={
+                        (e) => setNewPlayerName(
+                            e.target.value
+                        )
+                    }
                 />
                 <button 
                     className="btn btn-lg join-item rounded-r-full"
+                    disabled={
+                        newPlayerName.length === 0
+                    }
+                    onClick={
+                        validateAndAddPlayer
+                    }
                 >
                     Add
                 </button>
