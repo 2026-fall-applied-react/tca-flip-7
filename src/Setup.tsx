@@ -49,6 +49,11 @@ export const Setup: React.FC<SetupProps> = ({
                         nav('/play');
                     }
                 }
+                disabled={
+                    !availablePlayers.some(
+                        x => x.checked
+                    )
+                }
             >
                 Play the Game
             </button>
