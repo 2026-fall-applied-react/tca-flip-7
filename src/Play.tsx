@@ -47,7 +47,7 @@ export const Play: React.FC<PlayProps> = ({
                             key={
                                 x
                             }
-                            className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                            className="btn btn-secondary btn-lg mt-3 w-full lg:w-64"
                             onClick={
                                 () => {
                                     addNewGameResult({
