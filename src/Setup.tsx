@@ -27,6 +27,8 @@ export const Setup: React.FC<SetupProps> = ({
         )
     );
 
+    const [newPlayerName, setNewPlayerName] = useState("");
+
     useEffect(
         () => setTitle("Setup"),
         [],
@@ -40,6 +42,50 @@ export const Setup: React.FC<SetupProps> = ({
     const chosenPlayerCount = availablePlayers.filter(
         x => x.checked
     ).length;
+
+    const validateAndAdd = () => {
+
+        // check for dupe names
+        const dupe = availablePlayers.find(
+            x => x.name.toUpperCase() === newPlayerName.toUpperCase()
+        );
+
+        // if dupe, don't add, rather just check
+        // if (dupe) ...
+
+        // if not a dupe, add it, already checked since likely
+        // in front of user, ready to play
+        //  else (...)
+
+        setAvailablePlayers(
+            prev => [
+                // handle dupes by just checking them
+                ...prev.map(
+                    x => x === dupe
+                        ? {
+                            name: x.name,
+                            checked: true,
+                        }
+                        : x
+                ),
+                // now add non dupes
+                ...(
+                    dupe
+                        ? []
+                        : [
+                            {
+                                name: newPlayerName,
+                                checked: true,
+                            }
+                        ]
+                ),
+            ]
+        );
+
+        setNewPlayerName(
+            ""
+        );
+    };
 
     //
     // return the jsx
@@ -80,9 +126,23 @@ export const Setup: React.FC<SetupProps> = ({
                 <input 
                     className="input join-item w-full" 
                     placeholder="Enter player name" 
+                    value={
+                        newPlayerName
+                    }
+                    onChange={
+                        (e) => setNewPlayerName(
+                            e.target.value
+                        )
+                    }
                 />
                 <button 
                     className="btn join-item"
+                    disabled={
+                        newPlayerName.length === 0
+                    }
+                    onClick={
+                        validateAndAdd
+                    }
                 >
                     Add
                 </button>
