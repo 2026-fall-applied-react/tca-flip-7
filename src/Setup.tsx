@@ -13,6 +13,9 @@ export const Setup: React.FC<SetupProps> = ({
     setCurrentPlayers,
 }) => {
 
+    //
+    // react hooks
+    //
     const [availablePlayers, setAvailablePlayers] = useState(
         previousPlayers.map(
             x => (
@@ -31,14 +34,22 @@ export const Setup: React.FC<SetupProps> = ({
 
     const nav = useNavigate();
 
+    //
+    // derived or calculated state and helpers
+    //
+    const chosenPlayerCount = availablePlayers.filter(
+        x => x.checked
+    ).length;
+
+    //
+    // return the jsx
+    //
     return (
         <div>
             <button 
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 disabled={
-                    availablePlayers.filter(
-                        x => x.checked
-                    ).length === 0
+                    chosenPlayerCount === 0
                 }
                 onClick={
                     () => {
@@ -55,7 +66,11 @@ export const Setup: React.FC<SetupProps> = ({
                     }
                 }
             >
-                Play the Game
+                {
+                    chosenPlayerCount === 0
+                        ? "Choose player(s) below"
+                        : `Play with ${chosenPlayerCount} player(s)`
+                }
             </button>
             {
                 availablePlayers.map(
