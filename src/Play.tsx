@@ -37,11 +37,14 @@ export const Play: React.FC<PlayProps> = ({
     // return jsx...
     //
     return (
-        <div>
+        <div
+            className="flex flex-col"
+        >
             {
                 currentPlayers.map(
                     x => (
-                        <button 
+                        <button
+                            key={x} 
                             className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                             onClick={
                                 () => {
