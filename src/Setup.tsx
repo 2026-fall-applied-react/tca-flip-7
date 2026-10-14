@@ -35,6 +35,11 @@ export const Setup: React.FC<SetupProps> = ({
         <div>
             <button 
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                disabled={
+                    availablePlayers.filter(
+                        x => x.checked
+                    ).length === 0
+                }
                 onClick={
                     () => {
                         setCurrentPlayers(
