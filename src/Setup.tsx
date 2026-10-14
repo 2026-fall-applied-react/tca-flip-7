@@ -45,7 +45,9 @@ export const Setup: React.FC<SetupProps> = ({
     // return the jsx
     //
     return (
-        <div>
+        <div
+            className="flex flex-col"
+        >
             <button 
                 className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
                 disabled={
@@ -72,6 +74,19 @@ export const Setup: React.FC<SetupProps> = ({
                         : `Play with ${chosenPlayerCount} player(s)`
                 }
             </button>
+            <div 
+                className="join mt-3 mb-5 w-full lg:w-64"
+            >
+                <input 
+                    className="input join-item w-full" 
+                    placeholder="Enter player name" 
+                />
+                <button 
+                    className="btn join-item"
+                >
+                    Add
+                </button>
+            </div>
             {
                 availablePlayers.map(
                     x => (
