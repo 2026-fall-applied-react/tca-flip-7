@@ -95,7 +95,7 @@ export const Setup: React.FC<SetupProps> = ({
             className="flex flex-col"
         >
             <button 
-                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                className="btn btn-primary btn-lg mt-3 w-full lg:w-64"
                 disabled={
                     chosenPlayerCount === 0
                 }
@@ -136,7 +136,7 @@ export const Setup: React.FC<SetupProps> = ({
                     }
                 />
                 <button 
-                    className="btn join-item"
+                    className="btn btn-secondary join-item"
                     disabled={
                         newPlayerName.length === 0
                     }

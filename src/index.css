@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: false;
+}
+
+/* Flip 7: warm cream stock, charcoal ink, mustard yellow with terracotta accents */
+@plugin "daisyui/theme" {
+  name: "flip7-light";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #fff8e7;
+  --color-base-200: #f3e6c4;
+  --color-base-300: #dcc994;
+  --color-base-content: #2e2a26;
+  --color-primary: #e0a526;
+  --color-primary-content: #2e2a26;
+  --color-secondary: #b9532f;
+  --color-secondary-content: #fff8e7;
+  --color-accent: #6b8e3d;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3a3530;
+  --color-neutral-content: #fff8e7;
+  --color-info: #8a6d3b;
+  --color-success: #5e8c3a;
+  --color-warning: #e0a526;
+  --color-error: #b3261e;
+  --radius-box: 0.5rem;
+  --radius-field: 0.5rem;
+  --border: 1px;
+  --depth: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "flip7-dark";
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #3b3a38;
+  --color-base-200: #302f2d;
+  --color-base-300: #565451;
+  --color-base-content: #f7efdc;
+  --color-primary: #e3b33c;
+  --color-primary-content: #2a2418;
+  --color-secondary: #e58a5b;
+  --color-secondary-content: #2a1a10;
+  --color-accent: #9bbf62;
+  --color-accent-content: #1f2a12;
+  --color-neutral: #f7efdc;
+  --color-neutral-content: #302f2d;
+  --color-info: #c9a66b;
+  --color-success: #9bbf62;
+  --color-warning: #e3b33c;
+  --color-error: #e5736a;
+  --radius-box: 0.5rem;
+  --radius-field: 0.5rem;
+  --border: 1px;
+  --depth: 0;
+}

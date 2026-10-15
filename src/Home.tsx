@@ -39,16 +39,16 @@ export const Home: React.FC<HomeProps> = ({
     return (
         <div>
             <button
-                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                className="btn btn-primary btn-lg mt-3 w-full lg:w-64"
                 onClick={
                     () => nav('/setup')
                 }
             >
                 Setup a Game
             </button>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            <div className="w-full my-6 pt-4 border-t border-base-300">
+                <div className="p-0">
+                    <h2 className="text-xl font-bold ml-3 mt-3 text-secondary">
                         General
                     </h2>
                     <div className="overflow-x-auto">
@@ -75,9 +75,9 @@ export const Home: React.FC<HomeProps> = ({
                     </div>
                 </div>
             </div>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            <div className="w-full my-6 pt-4 border-t border-base-300">
+                <div className="p-0">
+                    <h2 className="text-xl font-bold ml-3 mt-3 text-secondary">
                         Leaderboard
                     </h2>
                     {
@@ -122,9 +122,9 @@ export const Home: React.FC<HomeProps> = ({
                     }
                 </div>
             </div>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            <div className="w-full my-6 pt-4 border-t border-base-300">
+                <div className="p-0">
+                    <h2 className="text-xl font-bold ml-3 mt-3 text-secondary">
                         Game Durations
                     </h2>
                     {
