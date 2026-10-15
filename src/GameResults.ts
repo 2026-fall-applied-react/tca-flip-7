@@ -36,6 +36,12 @@ export type GeneralFacts = {
     longestGame: string;
 };
 
+export type GameDurationEntry = {
+    players: number;
+    games: number;
+    avg: string;
+};
+
 //
 // public funcs
 //
@@ -116,6 +122,47 @@ export const getGeneralFacts = (
         }
     );
 };
+
+export const getGameDurations = (
+    games: GameResult[],
+): GameDurationEntry[] => games
+
+    // unique player counts
+    .map(
+        x => x.players.length
+    )
+    .filter(
+        (x, i, a) => i === a.indexOf(x)
+    )
+
+    // sorted 1 - n
+    .sort(
+        (a, b) => a - b
+    )
+
+    .map(
+        playerCount => {
+            const durationsInMs = games
+                .filter(
+                    x => x.players.length === playerCount
+                )
+                .map(
+                    x => Date.parse(x.end) - Date.parse(x.start)
+                );
+
+            return {
+                players: playerCount,
+                games: durationsInMs.length,
+                avg: formatGameDuration(
+                    durationsInMs.reduce(
+                        (acc, x) => acc + x,
+                        0,
+                    ) / durationsInMs.length
+                ),
+            };
+        }
+    )
+;
 
 export const getPreviousPlayers = (
     games: GameResult[],
