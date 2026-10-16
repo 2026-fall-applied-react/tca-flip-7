@@ -79,7 +79,7 @@ const App = () => {
   //
   return (
     <>
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-base-100 border-b-2 border-primary">
         <p className="font-bold text-xl">{title}</p>
       </div>
       <div

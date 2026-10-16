@@ -37,18 +37,18 @@ export const Home: React.FC<HomeProps> = ({
     // return jsx...
     //
     return (
-        <div>
+        <div className="-mx-3 -mb-3">
             <button
-                className="btn btn-soft btn-lg mt-3 w-full lg:w-64"
+                className="btn btn-primary btn-lg mb-3 mx-3 w-[calc(100%-1.5rem)] lg:w-64"
                 onClick={
                     () => nav('/setup')
                 }
             >
                 Setup a Game
             </button>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            <section className="border-t-2 border-primary/40 py-3">
+                <div>
+                    <h2 className="text-xl font-bold text-primary px-3 pb-2">
                         General
                     </h2>
                     <div className="overflow-x-auto">
@@ -74,17 +74,17 @@ export const Home: React.FC<HomeProps> = ({
                         </table>
                     </div>
                 </div>
-            </div>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            </section>
+            <section className="border-t-2 border-primary/40 py-3">
+                <div>
+                    <h2 className="text-xl font-bold text-primary px-3 pb-2">
                         Leaderboard
                     </h2>
                     {
                         lb.length === 0
                             ? (
                                 <p 
-                                    className="ml-3 mb-5"
+                                    className="px-3 pb-2"
                                 >
                                     Setup & play a game to see the leaderboard...
                                 </p>
@@ -121,17 +121,17 @@ export const Home: React.FC<HomeProps> = ({
                             )
                     }
                 </div>
-            </div>
-            <div className="card w-full bg-base-100 card-md shadow-lg my-5">
-                <div className="card-body p-0">
-                    <h2 className="card-title ml-3 mt-3">
+            </section>
+            <section className="border-t-2 border-primary/40 py-3">
+                <div>
+                    <h2 className="text-xl font-bold text-primary px-3 pb-2">
                         Game Durations
                     </h2>
                     {
                         gameDurations.length === 0
                             ? (
                                 <p 
-                                    className="ml-3 mb-5"
+                                    className="px-3 pb-2"
                                 >
                                     Setup & play a game to see game durations...
                                 </p>
@@ -166,7 +166,7 @@ export const Home: React.FC<HomeProps> = ({
                             )
                     }
                 </div>
-            </div>
+            </section>
         </div>
     );
 };
