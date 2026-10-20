@@ -8,47 +8,48 @@ import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
 import { getGameDurations, getGeneralFacts, getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import localforage from 'localforage'
 
 const dummyGameResults: GameResult[] = [
-    {
-        winner: "Bryson",
-        players: [
-            "Zack",
-            "Bryson",
-            "Tom",
-        ],
-        start: "2026-10-03T22:56:41.883Z",
-        end: "2026-10-03T23:06:59.883Z",        
-    },
-    {
-        winner: "Bryson",
-        players: [
-            "Bryson",
-            "Tom",
-            "Suzzie",
-        ],
-        start: "2026-10-03T22:56:41.883Z",
-        end: "2026-10-03T23:06:59.883Z",    
-    },
-    {
-        winner: "Zack",
-        players: [
-            "Zack",
-            "Suzzie",
-        ],
-        start: "2026-10-03T22:56:41.883Z",
-        end: "2026-10-03T23:06:59.883Z",            
-    },
-    {
-        winner: "John",
-        players: [
-            "John",
-            "Tom",
-        ],
-        start: "2026-10-05T22:56:41.883Z",
-        end: "2026-10-05T23:16:02.883Z",        
-    },
+  {
+    winner: "Bryson",
+    players: [
+      "Zack",
+      "Bryson",
+      "Tom",
+    ],
+    start: "2026-10-03T22:56:41.883Z",
+    end: "2026-10-03T23:06:59.883Z",
+  },
+  {
+    winner: "Bryson",
+    players: [
+      "Bryson",
+      "Tom",
+      "Suzzie",
+    ],
+    start: "2026-10-03T22:56:41.883Z",
+    end: "2026-10-03T23:06:59.883Z",
+  },
+  {
+    winner: "Zack",
+    players: [
+      "Zack",
+      "Suzzie",
+    ],
+    start: "2026-10-03T22:56:41.883Z",
+    end: "2026-10-03T23:06:59.883Z",
+  },
+  {
+    winner: "John",
+    players: [
+      "John",
+      "Tom",
+    ],
+    start: "2026-10-05T22:56:41.883Z",
+    end: "2026-10-05T23:16:02.883Z",
+  },
 ];
 
 const App = () => {
@@ -65,6 +66,32 @@ const App = () => {
   const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
 
   const [theme, setTheme] = useState("flip7-light");
+
+  useEffect(
+    () => {
+
+      const loadTheme = async () => {
+        const savedTheme = await localforage.getItem<string>(
+          "theme"
+        ) ?? "flip7-light";
+
+        if (!ignore) {
+          setTheme(savedTheme);
+        }
+      }
+
+      let ignore = false;
+      loadTheme();
+
+      return (
+        () => {
+          ignore = true;
+        }
+      );
+    },
+    [],
+  );
+
   //
   // derived or calculated state and helper funcs
   //
@@ -83,28 +110,36 @@ const App = () => {
       className="min-h-screen"
       data-theme={theme}
     >
-      <div 
+      <div
         className="navbar bg-base-100 border-b-2 border-primary"
       >
-        <p 
+        <p
           className="font-bold text-xl"
         >
           {title}
         </p>
-        <label 
+        <label
           className="swap swap-rotate ml-auto">
           {/* this hidden checkbox controls the state */}
-          <input 
+          <input
             type="checkbox"
             checked={
               theme !== "flip7-light"
-            } 
+            }
             onChange={
-              () => setTheme(
-                theme ==="flip7-light"
-                  ? "flip7-dark"
-                  : "flip7-light"
-              )
+              async () => {
+
+                const savedTheme = await localforage.setItem(
+                  "theme",
+                  theme === "flip7-light"
+                    ? "flip7-dark"
+                    : "flip7-light"
+                );
+
+                setTheme(
+                  savedTheme
+                );
+              }
             }
           />
 
@@ -154,7 +189,7 @@ const App = () => {
             <Route
               path='/setup'
               element={
-                <Setup 
+                <Setup
                   setTitle={
                     setTitle
                   }
