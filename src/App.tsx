@@ -64,6 +64,7 @@ const App = () => {
 
   const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
 
+  const [theme, setTheme] = useState("flip7-light");
   //
   // derived or calculated state and helper funcs
   //
@@ -80,7 +81,7 @@ const App = () => {
   return (
     <div
       className="min-h-screen"
-      data-theme="flip7-light"
+      data-theme={theme}
     >
       <div 
         className="navbar bg-base-100 border-b-2 border-primary"
@@ -93,7 +94,19 @@ const App = () => {
         <label 
           className="swap swap-rotate ml-auto">
           {/* this hidden checkbox controls the state */}
-          <input type="checkbox" />
+          <input 
+            type="checkbox"
+            checked={
+              theme !== "flip7-light"
+            } 
+            onChange={
+              () => setTheme(
+                theme ==="flip7-light"
+                  ? "flip7-dark"
+                  : "flip7-light"
+              )
+            }
+          />
 
           {/* sun icon */}
           <svg
