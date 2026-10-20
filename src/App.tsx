@@ -78,7 +78,10 @@ const App = () => {
   // returns jsx
   //
   return (
-    <>
+    <div
+      className="min-h-screen"
+      data-theme="flip7-light"
+    >
       <div 
         className="navbar bg-base-100 border-b-2 border-primary"
       >
@@ -170,7 +173,7 @@ const App = () => {
           </Routes>
         </HashRouter>
       </div>
-    </>
+    </div>
   )
 }
 
