@@ -11,6 +11,9 @@ import { getGameDurations, getGeneralFacts, getLeaderboard, getPreviousPlayers, 
 import { useEffect, useState } from 'react'
 import localforage from 'localforage'
 
+const DEFAULT_THEME = "flip7-light";
+const OTHER_THEME = "flip7-dark";
+
 const dummyGameResults: GameResult[] = [
   {
     winner: "Bryson",
@@ -65,7 +68,7 @@ const App = () => {
 
   const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
 
-  const [theme, setTheme] = useState("flip7-light");
+  const [theme, setTheme] = useState(DEFAULT_THEME);
 
   useEffect(
     () => {
@@ -73,7 +76,7 @@ const App = () => {
       const loadTheme = async () => {
         const savedTheme = await localforage.getItem<string>(
           "theme"
-        ) ?? "flip7-light";
+        ) ?? DEFAULT_THEME;
 
         if (!ignore) {
           setTheme(savedTheme);
@@ -124,16 +127,16 @@ const App = () => {
           <input
             type="checkbox"
             checked={
-              theme !== "flip7-light"
+              theme !== DEFAULT_THEME
             }
             onChange={
               async () => {
 
                 const savedTheme = await localforage.setItem(
                   "theme",
-                  theme === "flip7-light"
-                    ? "flip7-dark"
-                    : "flip7-light"
+                  theme === DEFAULT_THEME
+                    ? OTHER_THEME
+                    : DEFAULT_THEME
                 );
 
                 setTheme(
