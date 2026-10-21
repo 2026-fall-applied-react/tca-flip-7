@@ -51,6 +51,9 @@ const dummyGameResults: GameResult[] = [
     },
 ];
 
+const DEFAULT_THEME = "flip7-light";
+const OTHER_THEME = "flip7-dark";
+
 const App = () => {
 
   //
@@ -63,6 +66,8 @@ const App = () => {
   const [title, setTitle] = useState(APP_TITLE);
 
   const [currentPlayers, setCurrentPlayers] = useState<string[]>([]);
+
+  const [theme, setTheme] = useState(DEFAULT_THEME);
 
   //
   // derived or calculated state and helper funcs
@@ -78,7 +83,10 @@ const App = () => {
   // returns jsx
   //
   return (
-    <>
+    <div
+      className="min-h-screen"
+      data-theme={theme}
+    >
       <div 
         className="navbar bg-base-100 border-b-2 border-primary flex flex-row"
       >
@@ -93,6 +101,16 @@ const App = () => {
           {/* this hidden checkbox controls the state */}
           <input 
             type="checkbox" 
+            checked={
+              theme !== DEFAULT_THEME
+            }
+            onChange={
+              () => setTheme(
+                theme === DEFAULT_THEME
+                  ? OTHER_THEME
+                  : DEFAULT_THEME
+              )
+            }
           />
 
           {/* sun icon */}
@@ -175,7 +193,7 @@ const App = () => {
           </Routes>
         </HashRouter>
       </div>
-    </>
+    </div>
   )
 }
 
