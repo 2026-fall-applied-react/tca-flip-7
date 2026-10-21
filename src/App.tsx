@@ -8,7 +8,8 @@ import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
 import { getGameDurations, getGeneralFacts, getLeaderboard, getPreviousPlayers, type GameResult } from './GameResults'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import localforage from 'localforage'
 
 const dummyGameResults: GameResult[] = [
     {
@@ -69,6 +70,34 @@ const App = () => {
 
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
+  useEffect(
+    () => {
+
+      const loadTheme = async () => {
+
+        const savedTheme = await localforage.getItem<string>(
+          "theme"
+        ) ?? DEFAULT_THEME;
+
+        if (!ignore) {
+          setTheme(
+            savedTheme
+          );
+        }
+      };
+
+      let ignore = false;
+      loadTheme();
+
+      return (
+        () => {
+          ignore = true;
+        }
+      );
+    },
+    [],
+  );
+
   //
   // derived or calculated state and helper funcs
   //
@@ -105,11 +134,19 @@ const App = () => {
               theme !== DEFAULT_THEME
             }
             onChange={
-              () => setTheme(
-                theme === DEFAULT_THEME
-                  ? OTHER_THEME
-                  : DEFAULT_THEME
-              )
+              async () => {
+
+                const savedTheme = await localforage.setItem<string>(
+                  "theme",
+                  theme === DEFAULT_THEME
+                    ? OTHER_THEME
+                    : DEFAULT_THEME,
+                );
+
+                setTheme(
+                  savedTheme
+                );
+              }
             }
           />
 
