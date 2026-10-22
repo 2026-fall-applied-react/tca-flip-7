@@ -8,4 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  base: "/tca-flip-7/",
+  build: {
+    outDir: "docs",
+  },
 })
