@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import type { GameDurationEntry, GeneralFacts, LeaderboardEntry } from "./GameResults";
-import { useEffect } from "react";
+import { MIN_STREAK_LENGTH, type GameDurationEntry, type GeneralFacts, type LeaderboardEntry, type WinStreak, type WinStreakEntry } from "./GameResults";
+import { useEffect, useState } from "react";
 
 export const APP_TITLE = "Flip 7 Companion";
 
@@ -9,14 +9,67 @@ type HomeProps = {
     setTitle: (t: string) => void;
     generalFacts: GeneralFacts;
     gameDurations: GameDurationEntry[];
+    winStreaks: WinStreakEntry[];
 };
+
+const formatGameDate = (iso: string) => new Date(iso).toLocaleDateString(
+    undefined,
+    { year: "numeric", month: "short", day: "numeric" },
+);
+
+const StreakGames: React.FC<{ title: string; streak: WinStreak | null }> = ({
+    title,
+    streak,
+}) => (
+    <div className="mb-4">
+        <h4 className="font-bold mb-1">
+            {title}{streak ? ` (${streak.length} wins)` : ""}
+        </h4>
+        {
+            streak === null
+                ? <p className="opacity-70">No active streak</p>
+                : (
+                    <ul className="list-disc pl-5">
+                        {
+                            streak.games.map(
+                                x => (
+                                    <li key={x.end}>
+                                        <span className="font-semibold">{formatGameDate(x.end)}</span>
+                                        {" vs "}
+                                        {x.players.filter(p => p !== x.winner).join(", ") || "nobody"}
+                                    </li>
+                                )
+                            )
+                        }
+                    </ul>
+                )
+        }
+        {
+            streak?.brokenBy && (
+                <div className="alert alert-warning mt-2 py-2">
+                    <span>
+                        💥 Streak broken by <span className="font-bold">{streak.brokenBy.winner}</span>
+                        {" on "}
+                        {formatGameDate(streak.brokenBy.end)}
+                    </span>
+                </div>
+            )
+        }
+    </div>
+);
 
 export const Home: React.FC<HomeProps> = ({
     leaderboard: lb,
     setTitle,
     generalFacts,
     gameDurations,
+    winStreaks,
 }) => {
+
+    const [streakPlayer, setStreakPlayer] = useState<string | null>(null);
+    const selectedStreak = winStreaks.find(
+        x => x.player === streakPlayer
+    );
 
     //
     // react hooks...
@@ -122,6 +175,98 @@ export const Home: React.FC<HomeProps> = ({
                     }
                 </div>
             </section>
+            <section className="border-t-2 border-primary/40 py-3">
+                <div>
+                    <h2 className="text-xl font-bold text-primary px-3 pb-2">
+                        Win Streaks
+                    </h2>
+                    {
+                        winStreaks.length === 0
+                            ? (
+                                <p
+                                    className="px-3 pb-2"
+                                >
+                                    Win {MIN_STREAK_LENGTH}+ games in a row to start a streak...
+                                </p>
+                            )
+                            : (
+                                <div className="overflow-x-auto">
+                                    <table className="table table-zebra">
+                                        <thead>
+                                            <tr>
+                                                <th>CURRENT</th>
+                                                <th>LONGEST</th>
+                                                <th>PLAYER</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                winStreaks.map(
+                                                    x => (
+                                                        <tr
+                                                            key={x.player}
+                                                        >
+                                                            <td>{x.current?.length ?? "-"}</td>
+                                                            <td>{x.longest.length}</td>
+                                                            <td>{x.player}</td>
+                                                            <td>
+                                                                <button
+                                                                    className="btn btn-xs btn-outline btn-primary"
+                                                                    onClick={
+                                                                        () => setStreakPlayer(x.player)
+                                                                    }
+                                                                >
+                                                                    Details
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )
+                    }
+                </div>
+            </section>
+            <dialog
+                className={`modal ${selectedStreak ? "modal-open" : ""}`}
+                onClose={() => setStreakPlayer(null)}
+            >
+                <div className="modal-box">
+                    {
+                        selectedStreak && (
+                            <>
+                                <h3 className="text-lg font-bold text-primary mb-3">
+                                    {selectedStreak.player}'s Win Streaks
+                                </h3>
+                                <StreakGames
+                                    title="Current streak"
+                                    streak={selectedStreak.current}
+                                />
+                                <StreakGames
+                                    title="Longest streak"
+                                    streak={selectedStreak.longest}
+                                />
+                            </>
+                        )
+                    }
+                    <div className="modal-action">
+                        <button
+                            className="btn"
+                            onClick={() => setStreakPlayer(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+                <div
+                    className="modal-backdrop"
+                    onClick={() => setStreakPlayer(null)}
+                />
+            </dialog>
             <section className="border-t-2 border-primary/40 py-3">
                 <div>
                     <h2 className="text-xl font-bold text-primary px-3 pb-2">
