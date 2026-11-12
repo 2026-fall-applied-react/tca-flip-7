@@ -42,9 +42,84 @@ export type GameDurationEntry = {
     avg: string;
 };
 
+export type WinStreak = {
+    length: number;
+    games: GameResult[];
+    // the game that ended the streak, null if it's still active
+    brokenBy: GameResult | null;
+};
+
+export type WinStreakEntry = {
+    player: string;
+    current: WinStreak | null;
+    longest: WinStreak;
+};
+
+// a streak is 2+ wins in a row, games the player sat out don't break it
+export const MIN_STREAK_LENGTH = 0;
+
 //
 // public funcs
 //
+export const getWinStreaks = (
+    games: GameResult[],
+): WinStreakEntry[] => {
+
+    const gamesOldestFirst = [...games].sort(
+        (a, b) => Date.parse(a.end) - Date.parse(b.end)
+    );
+
+    return getPreviousPlayers(games)
+        .map(
+            player => {
+                let run: GameResult[] = [];
+                let longest: WinStreak = { length: 0, games: [], brokenBy: null };
+
+                gamesOldestFirst
+                    .filter(
+                        x => x.players.includes(player)
+                    )
+                    .forEach(
+                        x => {
+                            if (x.winner === player) {
+                                run = [...run, x];
+
+                                // >= so a tie goes to the more recent streak
+                                if (run.length >= longest.length) {
+                                    longest = { length: run.length, games: run, brokenBy: null };
+                                }
+                            }
+                            else {
+                                // this loss ended the longest streak so far
+                                if (run.length > 0 && longest.games === run) {
+                                    longest = { ...longest, brokenBy: x };
+                                }
+                                run = [];
+                            }
+                        }
+                    );
+
+                return {
+                    player,
+                    current: run.length >= MIN_STREAK_LENGTH
+                        ? { length: run.length, games: run, brokenBy: null }
+                        : null,
+                    longest,
+                };
+            }
+        )
+        .filter(
+            x => x.longest.length >= MIN_STREAK_LENGTH
+        )
+        .sort(
+            (a, b) => (
+                b.longest.length - a.longest.length
+                || (b.current?.length ?? 0) - (a.current?.length ?? 0)
+                || a.player.localeCompare(b.player)
+            )
+        );
+};
+
 export const getLeaderboard = (
     games: GameResult[]
 ): LeaderboardEntry[] => getPreviousPlayers(
