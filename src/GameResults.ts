@@ -65,6 +65,102 @@ export const DECK_COMPOSITION: Record<FlipSevenCard, number> = {
     "Second Chance": 3,
 };
 
+export type CardDraw = GameResult["cardDraws"][number];
+
+export type PlayerHand = {
+    numbers: number[];
+    secondChance: boolean;
+    busted: boolean;
+    total: number;
+};
+
+// a duplicate number busts the player unless they hold a second chance, which it consumes
+export const getPlayerHand = (
+    cards: FlipSevenCard[],
+): PlayerHand => {
+    const numbers: number[] = [];
+    let secondChance = false;
+    let busted = false;
+    let plus = 0;
+    let doubled = false;
+
+    for (const card of cards) {
+        if (busted) {
+            break;
+        }
+        if (typeof card === "number") {
+            if (numbers.includes(card)) {
+                if (secondChance) {
+                    secondChance = false;
+                }
+                else {
+                    busted = true;
+                }
+            }
+            else {
+                numbers.push(card);
+            }
+        }
+        else if (card === "Second Chance") {
+            secondChance = true;
+        }
+        else if (card === "x2") {
+            doubled = true;
+        }
+        else if (card.startsWith("+")) {
+            plus += Number(card.slice(1));
+        }
+    }
+
+    const numberSum = numbers.reduce((acc, x) => acc + x, 0);
+
+    return {
+        numbers,
+        secondChance,
+        busted,
+        total: busted ? 0 : numberSum * (doubled ? 2 : 1) + plus,
+    };
+};
+
+// chance (0 - 1) the next card from the shared deck busts a player with this hand
+export const getBustChance = (
+    hand: PlayerHand,
+    allDrawnCards: FlipSevenCard[],
+): number => {
+    if (hand.busted || hand.secondChance) {
+        return 0;
+    }
+
+    const drawnCount = (card: FlipSevenCard) => allDrawnCards.filter(
+        x => x === card
+    ).length;
+
+    const remaining = (card: FlipSevenCard) => Math.max(
+        0,
+        DECK_COMPOSITION[card] - drawnCount(card),
+    );
+
+    const deckSize = Object.keys(DECK_COMPOSITION)
+        .map(parseCardKey)
+        .reduce<number>((acc, x) => acc + remaining(x), 0);
+
+    if (deckSize === 0) {
+        return 0;
+    }
+
+    const bustCards = hand.numbers.reduce<number>(
+        (acc, x) => acc + remaining(x as FlipSevenCard),
+        0,
+    );
+
+    return bustCards / deckSize;
+};
+
+// Object.keys turns numeric cards into strings, this restores them
+const parseCardKey = (key: string): FlipSevenCard => (
+    /^\d+$/.test(key) ? Number(key) as FlipSevenCard : key as FlipSevenCard
+);
+
 export type GameResult = {
     winner: string;
     players: string[];
