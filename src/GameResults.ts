@@ -65,7 +65,11 @@ export const DECK_COMPOSITION: Record<FlipSevenCard, number> = {
     "Second Chance": 3,
 };
 
-export type CardDraw = GameResult["cardDraws"][number];
+export type CardDraw = {
+    timestamp: string;
+    player: string;
+    card: FlipSevenCard;
+};
 
 export type PlayerHand = {
     numbers: number[];
@@ -74,6 +78,53 @@ export type PlayerHand = {
     total: number;
 };
 
+export type GameResult = {
+    winner: string;
+    players: string[];
+    start: string;
+    end: string;
+    cardDraws: CardDraw[];
+};
+
+export type LeaderboardEntry = {
+    wins: number;
+    losses: number;
+    avg: number;
+    player: string;
+};
+
+export type GeneralFacts = {
+    lastPlayed: string;
+    totalGames: number;
+    shortestGame: string;
+    longestGame: string;
+};
+
+export type GameDurationEntry = {
+    players: number;
+    games: number;
+    avg: string;
+};
+
+export type WinStreak = {
+    length: number;
+    games: GameResult[];
+    // the game that ended the streak, null if it's still active
+    brokenBy: GameResult | null;
+};
+
+export type WinStreakEntry = {
+    player: string;
+    current: WinStreak | null;
+    longest: WinStreak;
+};
+
+// a streak is 2+ wins in a row, games the player sat out don't break it
+export const MIN_STREAK_LENGTH = 0;
+
+//
+// public funcs
+//
 // a duplicate number busts the player unless they hold a second chance, which it consumes
 export const getPlayerHand = (
     cards: FlipSevenCard[],
@@ -156,62 +207,6 @@ export const getBustChance = (
     return bustCards / deckSize;
 };
 
-// Object.keys turns numeric cards into strings, this restores them
-const parseCardKey = (key: string): FlipSevenCard => (
-    /^\d+$/.test(key) ? Number(key) as FlipSevenCard : key as FlipSevenCard
-);
-
-export type GameResult = {
-    winner: string;
-    players: string[];
-    start: string;
-    end: string;
-    cardDraws: {
-        timestamp:  string,
-        player: string,
-        card: FlipSevenCard,
-    }[]
-};
-
-export type LeaderboardEntry = {
-    wins: number;
-    losses: number;
-    avg: number;
-    player: string;
-};
-
-export type GeneralFacts = {
-    lastPlayed: string;
-    totalGames: number;
-    shortestGame: string;
-    longestGame: string;
-};
-
-export type GameDurationEntry = {
-    players: number;
-    games: number;
-    avg: string;
-};
-
-export type WinStreak = {
-    length: number;
-    games: GameResult[];
-    // the game that ended the streak, null if it's still active
-    brokenBy: GameResult | null;
-};
-
-export type WinStreakEntry = {
-    player: string;
-    current: WinStreak | null;
-    longest: WinStreak;
-};
-
-// a streak is 2+ wins in a row, games the player sat out don't break it
-export const MIN_STREAK_LENGTH = 0;
-
-//
-// public funcs
-//
 export const getWinStreaks = (
     games: GameResult[],
 ): WinStreakEntry[] => {
@@ -415,6 +410,11 @@ export const getPreviousPlayers = (
 //
 // helper funcs
 //
+// Object.keys turns numeric cards into strings, this restores them
+const parseCardKey = (key: string): FlipSevenCard => (
+    /^\d+$/.test(key) ? Number(key) as FlipSevenCard : key as FlipSevenCard
+);
+
 const getLeaderboarEntry = (
     games: GameResult[],
     player: string,
