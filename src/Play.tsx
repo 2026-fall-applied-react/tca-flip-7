@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import {
     getBustChance,
+    getCardsOutOfDeck,
     getPlayerHand,
     type CardDraw,
     type FlipSevenCard,
@@ -18,6 +19,7 @@ type PlayProps = {
 // reducer
 //
 type PlayState = {
+    round: number;
     order: string[];
     draws: CardDraw[];
     passed: string[];
@@ -31,7 +33,8 @@ type PlayAction =
     | { type: "togglePicking"; player: string }
     | { type: "draw"; player: string; card: FlipSevenCard; timestamp: string }
     | { type: "undoDraw"; player: string }
-    | { type: "togglePass"; player: string };
+    | { type: "togglePass"; player: string }
+    | { type: "nextRound" };
 
 const toggleIn = (list: string[], item: string) => (
     list.includes(item) ? list.filter(x => x !== item) : [...list, item]
@@ -65,12 +68,19 @@ const reducer = (state: PlayState, action: PlayAction): PlayState => {
                 ...state,
                 draws: [
                     ...state.draws,
-                    { timestamp: action.timestamp, player: action.player, card: action.card },
+                    {
+                        round: state.round,
+                        timestamp: action.timestamp,
+                        player: action.player,
+                        card: action.card,
+                    },
                 ],
                 picking: null,
             };
         case "undoDraw": {
-            const last = state.draws.map(x => x.player).lastIndexOf(action.player);
+            const last = state.draws.findLastIndex(
+                x => x.player === action.player && x.round === state.round
+            );
             return last < 0
                 ? state
                 : { ...state, draws: state.draws.filter((_, i) => i !== last) };
@@ -79,6 +89,13 @@ const reducer = (state: PlayState, action: PlayAction): PlayState => {
             return {
                 ...state,
                 passed: toggleIn(state.passed, action.player),
+                picking: null,
+            };
+        case "nextRound":
+            return {
+                ...state,
+                round: state.round + 1,
+                passed: [],
                 picking: null,
             };
     }
@@ -113,6 +130,7 @@ export const Play: React.FC<PlayProps> = ({
         reducer,
         currentPlayers,
         (players): PlayState => ({
+            round: 1,
             order: players,
             draws: [],
             passed: [],
@@ -126,7 +144,13 @@ export const Play: React.FC<PlayProps> = ({
     //
     // calculated state...
     //
-    const allDrawnCards = state.draws.map(x => x.card);
+    const cardsOutOfDeck = getCardsOutOfDeck(state.draws);
+
+    const getRoundCards = (player: string, round: number) => state.draws
+        .filter(x => x.player === player && x.round === round)
+        .map(x => x.card);
+
+    const rounds = Array.from({ length: state.round }, (_, i) => i + 1);
 
     const endGame = (winner: string) => {
         addNewGameResult({
@@ -144,14 +168,27 @@ export const Play: React.FC<PlayProps> = ({
     //
     return (
         <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between sticky top-0 z-10 bg-base-100 py-2">
+                <h2 className="text-xl font-bold text-primary">
+                    Round {state.round}
+                </h2>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => dispatch({ type: "nextRound" })}
+                >
+                    Next Round
+                </button>
+            </div>
             {
                 state.order.map(
                     (player, i) => {
-                        const cards = state.draws
-                            .filter(x => x.player === player)
-                            .map(x => x.card);
+                        const cards = getRoundCards(player, state.round);
                         const hand = getPlayerHand(cards);
-                        const bustChance = getBustChance(hand, allDrawnCards);
+                        const bustChance = getBustChance(hand, cardsOutOfDeck);
+                        const roundScores = rounds.map(
+                            r => getPlayerHand(getRoundCards(player, r)).total
+                        );
+                        const gameTotal = roundScores.reduce((acc, x) => acc + x, 0);
                         const passed = state.passed.includes(player);
                         const canDraw = !hand.busted && !passed;
                         const expanded = state.expanded.includes(player);
@@ -198,8 +235,12 @@ export const Play: React.FC<PlayProps> = ({
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <div>
-                                            <div className="text-xs opacity-70">Total</div>
+                                            <div className="text-xs opacity-70">Round</div>
                                             <div className="text-2xl font-bold">{hand.total}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs opacity-70">Game</div>
+                                            <div className="text-2xl font-bold">{gameTotal}</div>
                                         </div>
                                         <div>
                                             <div className="text-xs opacity-70">Bust chance</div>
@@ -226,6 +267,27 @@ export const Play: React.FC<PlayProps> = ({
                                     {
                                         expanded && (
                                             <div className="flex flex-col gap-2 pt-2 border-t border-base-300">
+                                                {
+                                                    rounds.slice(0, -1).map(
+                                                        r => (
+                                                            <div key={r} className="flex items-center gap-2 text-sm">
+                                                                <span className="font-semibold w-8">R{r}</span>
+                                                                <div className="flex flex-wrap gap-1 flex-1">
+                                                                    {
+                                                                        getRoundCards(player, r).map(
+                                                                            (card, j) => (
+                                                                                <span key={j} className="badge badge-outline badge-sm">
+                                                                                    {card}
+                                                                                </span>
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                </div>
+                                                                <span className="font-bold">{roundScores[r - 1]}</span>
+                                                            </div>
+                                                        )
+                                                    )
+                                                }
                                                 <div className="flex gap-2">
                                                     <button
                                                         className="btn btn-primary flex-1"

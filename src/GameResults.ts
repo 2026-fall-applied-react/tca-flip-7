@@ -66,6 +66,8 @@ export const DECK_COMPOSITION: Record<FlipSevenCard, number> = {
 };
 
 export type CardDraw = {
+    // 1-based round of the game the card was drawn in
+    round: number;
     timestamp: string;
     player: string;
     card: FlipSevenCard;
@@ -171,6 +173,31 @@ export const getPlayerHand = (
         busted,
         total: busted ? 0 : numberSum * (doubled ? 2 : 1) + plus,
     };
+};
+
+// cards no longer in the draw pile; the deck carries over between rounds and is
+// reshuffled when it runs out, leaving only the cards in play that round out of it
+export const getCardsOutOfDeck = (
+    draws: CardDraw[],
+): FlipSevenCard[] => {
+    const deckSize = Object.values(DECK_COMPOSITION).reduce<number>(
+        (acc, x) => acc + x,
+        0,
+    );
+
+    return draws
+        .reduce<CardDraw[]>(
+            (out, draw) => [
+                ...(
+                    out.length >= deckSize
+                        ? out.filter(x => x.round === draw.round)
+                        : out
+                ),
+                draw,
+            ],
+            [],
+        )
+        .map(x => x.card);
 };
 
 // chance (0 - 1) the next card from the shared deck busts a player with this hand
