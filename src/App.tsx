@@ -7,7 +7,7 @@ import {
 import { APP_TITLE, Home } from './Home'
 import { Setup } from './Setup'
 import { Play } from './Play'
-import { getGameDurations, getGeneralFacts, getLeaderboard, getPreviousPlayers, getWinStreaks, type GameResult } from './GameResults'
+import { getGameDurations, getGeneralFacts, getLeaderboard, getLuckyPlayers, getPreviousPlayers, getUnluckyPlayers, getWinStreaks, type GameResult } from './GameResults'
 import { useEffect, useState } from 'react'
 import localforage from 'localforage'
 
@@ -198,6 +198,12 @@ const App = () => {
                   }
                   winStreaks={
                     getWinStreaks(gameResults)
+                  }
+                  luckyPlayers={
+                    getLuckyPlayers(gameResults)
+                  }
+                  unluckyPlayers={
+                    getUnluckyPlayers(gameResults)
                   }
                 />
               }

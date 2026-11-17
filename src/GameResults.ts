@@ -102,6 +102,14 @@ export type GeneralFacts = {
     longestGame: string;
 };
 
+export type LuckEntry = {
+    player: string;
+    // bust chance (0 - 100) of the player's most extreme survived draw or bust
+    percent: number;
+    // how many times the player hit that percent
+    times: number;
+};
+
 export type GameDurationEntry = {
     players: number;
     games: number;
@@ -371,6 +379,22 @@ export const getGeneralFacts = (
     );
 };
 
+// players ranked by the riskiest draw they survived, highest bust chance first
+export const getLuckyPlayers = (
+    games: GameResult[],
+): LuckEntry[] => getLuckEntries(
+    getDrawOutcomes(games).filter(x => !x.busted),
+    (a, b) => b - a,
+);
+
+// players ranked by the safest draw that still busted them, lowest bust chance first
+export const getUnluckyPlayers = (
+    games: GameResult[],
+): LuckEntry[] => getLuckEntries(
+    getDrawOutcomes(games).filter(x => x.busted),
+    (a, b) => a - b,
+);
+
 export const getGameDurations = (
     games: GameResult[],
 ): GameDurationEntry[] => games
@@ -437,6 +461,64 @@ export const getPreviousPlayers = (
 //
 // helper funcs
 //
+
+// every draw that carried some risk of busting, with its bust chance and whether it busted
+const getDrawOutcomes = (
+    games: GameResult[],
+): { player: string; percent: number; busted: boolean }[] => games.flatMap(
+    game => game.cardDraws.flatMap(
+        (draw, i) => {
+            const before = game.cardDraws.slice(0, i);
+            const playerCards = (cards: CardDraw[]) => cards
+                .filter(x => x.player === draw.player && x.round === draw.round)
+                .map(x => x.card);
+
+            const chance = getBustChance(
+                getPlayerHand(playerCards(before)),
+                getCardsOutOfDeck(before),
+            );
+
+            return chance > 0
+                ? [{
+                    player: draw.player,
+                    percent: Math.round(chance * 100),
+                    busted: getPlayerHand(playerCards([...before, draw])).busted,
+                }]
+                : [];
+        }
+    )
+);
+
+// one entry per player at their most extreme percent, ordered by the given percent comparison
+const getLuckEntries = (
+    outcomes: { player: string; percent: number }[],
+    comparePercents: (a: number, b: number) => number,
+): LuckEntry[] => outcomes
+    .map(x => x.player)
+    .filter((x, i, a) => i === a.indexOf(x))
+    .map(
+        player => {
+            const mine = outcomes.filter(x => x.player === player);
+            const percent = mine
+                .map(x => x.percent)
+                .sort(comparePercents)[0];
+
+            return {
+                player,
+                percent,
+                times: mine.filter(x => x.percent === percent).length,
+            };
+        }
+    )
+    .sort(
+        (a, b) => (
+            comparePercents(a.percent, b.percent)
+            || b.times - a.times
+            || a.player.localeCompare(b.player)
+        )
+    )
+;
+
 // Object.keys turns numeric cards into strings, this restores them
 const parseCardKey = (key: string): FlipSevenCard => (
     /^\d+$/.test(key) ? Number(key) as FlipSevenCard : key as FlipSevenCard
