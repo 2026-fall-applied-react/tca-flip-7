@@ -53,6 +53,7 @@ export const Play: React.FC<PlayProps> = ({
                                         players: currentPlayers,
                                         start: startTimestamp,
                                         end: new Date().toISOString(),
+                                        cardDraws: [],
                                     });
                                     nav(-2);
                                 }

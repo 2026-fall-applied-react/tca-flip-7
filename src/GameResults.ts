@@ -15,11 +15,66 @@ const formatLastPlayed = durationFormatter<string>(
 //
 // type defs/aliases
 //
+export type FlipSevenCard = 12
+    | 11
+    | 10
+    | 9
+    | 8
+    | 7
+    | 6
+    | 5
+    | 4
+    | 3
+    | 2
+    | 1
+    | 0
+    | "+2"
+    | "+4"
+    | "+6"
+    | "+8"
+    | "+10"
+    | "x2"
+    | "Freeze"
+    | "Flip Three"
+    | "Second Chance"
+;
+
+// 1 - 0, 1 -1, 2 - 2 ... 12 - 12, 1 each of plus and times modifiers, 3 freeze, 3 flip three, 3 second chance
+export const DECK_COMPOSITION: Record<FlipSevenCard, number> = {
+    0: 1,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    11: 11,
+    12: 12,
+    "+2": 1,
+    "+4": 1,
+    "+6": 1,
+    "+8": 1,
+    "+10": 1,
+    "x2": 1,
+    "Freeze": 3,
+    "Flip Three": 3,
+    "Second Chance": 3,
+};
+
 export type GameResult = {
     winner: string;
     players: string[];
     start: string;
     end: string;
+    cardDraws: {
+        timestamp:  string,
+        player: string,
+        card: FlipSevenCard,
+    }[]
 };
 
 export type LeaderboardEntry = {

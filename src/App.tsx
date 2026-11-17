@@ -20,7 +20,8 @@ const dummyGameResults: GameResult[] = [
             "Tom",
         ],
         start: "2026-10-03T22:56:41.883Z",
-        end: "2026-10-03T23:06:59.883Z",        
+        end: "2026-10-03T23:06:59.883Z",
+        cardDraws: [],
     },
     {
         winner: "Bryson",
@@ -31,7 +32,8 @@ const dummyGameResults: GameResult[] = [
         ],
         start: "2026-10-03T22:56:41.883Z",
         end: "2026-10-03T23:06:59.883Z",    
-    },
+        cardDraws: [],
+      },
     {
         winner: "Zack",
         players: [
@@ -40,7 +42,8 @@ const dummyGameResults: GameResult[] = [
         ],
         start: "2026-10-03T22:56:41.883Z",
         end: "2026-10-03T23:06:59.883Z",            
-    },
+        cardDraws: [],
+      },
     {
         winner: "John",
         players: [
@@ -49,7 +52,8 @@ const dummyGameResults: GameResult[] = [
         ],
         start: "2026-10-05T22:56:41.883Z",
         end: "2026-10-05T23:16:02.883Z",        
-    },
+        cardDraws: [],
+      },
 ];
 
 const DEFAULT_THEME = "flip7-light";
