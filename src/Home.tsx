@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { MIN_STREAK_LENGTH, type GameDurationEntry, type GeneralFacts, type LeaderboardEntry, type WinStreak, type WinStreakEntry } from "./GameResults";
+import { MIN_STREAK_LENGTH, type GameDurationEntry, type GeneralFacts, type LeaderboardEntry, type LuckEntry, type WinStreak, type WinStreakEntry } from "./GameResults";
 import { useEffect, useState } from "react";
 
 export const APP_TITLE = "Flip 7 Companion";
@@ -10,7 +10,54 @@ type HomeProps = {
     generalFacts: GeneralFacts;
     gameDurations: GameDurationEntry[];
     winStreaks: WinStreakEntry[];
+    luckyPlayers: LuckEntry[];
+    unluckyPlayers: LuckEntry[];
 };
+
+const LuckSection: React.FC<{
+    title: string;
+    percentHeader: string;
+    emptyMessage: string;
+    entries: LuckEntry[];
+}> = ({ title, percentHeader, emptyMessage, entries }) => (
+    <section className="border-t-2 border-primary/40 py-3">
+        <div>
+            <h2 className="text-xl font-bold text-primary px-3 pb-2">
+                {title}
+            </h2>
+            {
+                entries.length === 0
+                    ? <p className="px-3 pb-2">{emptyMessage}</p>
+                    : (
+                        <div className="overflow-x-auto">
+                            <table className="table table-zebra">
+                                <thead>
+                                    <tr>
+                                        <th>{percentHeader}</th>
+                                        <th>TIMES</th>
+                                        <th>PLAYER</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        entries.map(
+                                            x => (
+                                                <tr key={x.player}>
+                                                    <td>{x.percent}% bust</td>
+                                                    <td>{x.times}</td>
+                                                    <td>{x.player}</td>
+                                                </tr>
+                                            )
+                                        )
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+            }
+        </div>
+    </section>
+);
 
 const formatGameDate = (iso: string) => new Date(iso).toLocaleDateString(
     undefined,
@@ -64,6 +111,8 @@ export const Home: React.FC<HomeProps> = ({
     generalFacts,
     gameDurations,
     winStreaks,
+    luckyPlayers,
+    unluckyPlayers,
 }) => {
 
     const [streakPlayer, setStreakPlayer] = useState<string | null>(null);
@@ -231,6 +280,18 @@ export const Home: React.FC<HomeProps> = ({
                     }
                 </div>
             </section>
+            <LuckSection
+                title="Lucky Players"
+                percentHeader="SURVIVED WITH"
+                emptyMessage="Log card draws in a game to see who survives the riskiest draws..."
+                entries={luckyPlayers}
+            />
+            <LuckSection
+                title="Unlucky Players"
+                percentHeader="BUSTED WITH"
+                emptyMessage="Log card draws in a game to see who busts on the safest draws..."
+                entries={unluckyPlayers}
+            />
             <dialog
                 className={`modal ${selectedStreak ? "modal-open" : ""}`}
                 onClose={() => setStreakPlayer(null)}

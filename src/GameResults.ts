@@ -15,11 +15,77 @@ const formatLastPlayed = durationFormatter<string>(
 //
 // type defs/aliases
 //
+export type FlipSevenCard = 12
+    | 11
+    | 10
+    | 9
+    | 8
+    | 7
+    | 6
+    | 5
+    | 4
+    | 3
+    | 2
+    | 1
+    | 0
+    | "+2"
+    | "+4"
+    | "+6"
+    | "+8"
+    | "+10"
+    | "x2"
+    | "Freeze"
+    | "Flip Three"
+    | "Second Chance"
+;
+
+// 1 - 0, 1 -1, 2 - 2 ... 12 - 12, 1 each of plus and times modifiers, 3 freeze, 3 flip three, 3 second chance
+export const DECK_COMPOSITION: Record<FlipSevenCard, number> = {
+    0: 1,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    11: 11,
+    12: 12,
+    "+2": 1,
+    "+4": 1,
+    "+6": 1,
+    "+8": 1,
+    "+10": 1,
+    "x2": 1,
+    "Freeze": 3,
+    "Flip Three": 3,
+    "Second Chance": 3,
+};
+
+export type CardDraw = {
+    // 1-based round of the game the card was drawn in
+    round: number;
+    timestamp: string;
+    player: string;
+    card: FlipSevenCard;
+};
+
+export type PlayerHand = {
+    numbers: number[];
+    secondChance: boolean;
+    busted: boolean;
+    total: number;
+};
+
 export type GameResult = {
     winner: string;
     players: string[];
     start: string;
     end: string;
+    cardDraws: CardDraw[];
 };
 
 export type LeaderboardEntry = {
@@ -34,6 +100,14 @@ export type GeneralFacts = {
     totalGames: number;
     shortestGame: string;
     longestGame: string;
+};
+
+export type LuckEntry = {
+    player: string;
+    // bust chance (0 - 100) of the player's most extreme survived draw or bust
+    percent: number;
+    // how many times the player hit that percent
+    times: number;
 };
 
 export type GameDurationEntry = {
@@ -61,6 +135,113 @@ export const MIN_STREAK_LENGTH = 0;
 //
 // public funcs
 //
+// a duplicate number busts the player unless they hold a second chance, which it consumes
+export const getPlayerHand = (
+    cards: FlipSevenCard[],
+): PlayerHand => {
+    const numbers: number[] = [];
+    let secondChance = false;
+    let busted = false;
+    let plus = 0;
+    let doubled = false;
+
+    for (const card of cards) {
+        if (busted) {
+            break;
+        }
+        if (typeof card === "number") {
+            if (numbers.includes(card)) {
+                if (secondChance) {
+                    secondChance = false;
+                }
+                else {
+                    busted = true;
+                }
+            }
+            else {
+                numbers.push(card);
+            }
+        }
+        else if (card === "Second Chance") {
+            secondChance = true;
+        }
+        else if (card === "x2") {
+            doubled = true;
+        }
+        else if (card.startsWith("+")) {
+            plus += Number(card.slice(1));
+        }
+    }
+
+    const numberSum = numbers.reduce((acc, x) => acc + x, 0);
+
+    return {
+        numbers,
+        secondChance,
+        busted,
+        total: busted ? 0 : numberSum * (doubled ? 2 : 1) + plus,
+    };
+};
+
+// cards no longer in the draw pile; the deck carries over between rounds and is
+// reshuffled when it runs out, leaving only the cards in play that round out of it
+export const getCardsOutOfDeck = (
+    draws: CardDraw[],
+): FlipSevenCard[] => {
+    const deckSize = Object.values(DECK_COMPOSITION).reduce<number>(
+        (acc, x) => acc + x,
+        0,
+    );
+
+    return draws
+        .reduce<CardDraw[]>(
+            (out, draw) => [
+                ...(
+                    out.length >= deckSize
+                        ? out.filter(x => x.round === draw.round)
+                        : out
+                ),
+                draw,
+            ],
+            [],
+        )
+        .map(x => x.card);
+};
+
+// chance (0 - 1) the next card from the shared deck busts a player with this hand
+export const getBustChance = (
+    hand: PlayerHand,
+    allDrawnCards: FlipSevenCard[],
+): number => {
+    if (hand.busted || hand.secondChance) {
+        return 0;
+    }
+
+    const drawnCount = (card: FlipSevenCard) => allDrawnCards.filter(
+        x => x === card
+    ).length;
+
+    const remaining = (card: FlipSevenCard) => Math.max(
+        0,
+        DECK_COMPOSITION[card] - drawnCount(card),
+    );
+
+    const deckSize = Object.keys(DECK_COMPOSITION)
+        .map(parseCardKey)
+        .reduce<number>((acc, x) => acc + remaining(x), 0);
+
+    if (deckSize === 0) {
+        return 0;
+    }
+
+    const bustCards = hand.numbers.reduce<number>(
+        (acc, x) => acc + remaining(x as FlipSevenCard),
+        0,
+    );
+
+    return bustCards / deckSize;
+};
+
 export const getWinStreaks = (
     games: GameResult[],
 ): WinStreakEntry[] => {
@@ -198,6 +379,22 @@ export const getGeneralFacts = (
     );
 };
 
+// players ranked by the riskiest draw they survived, highest bust chance first
+export const getLuckyPlayers = (
+    games: GameResult[],
+): LuckEntry[] => getLuckEntries(
+    getDrawOutcomes(games).filter(x => !x.busted),
+    (a, b) => b - a,
+);
+
+// players ranked by the safest draw that still busted them, lowest bust chance first
+export const getUnluckyPlayers = (
+    games: GameResult[],
+): LuckEntry[] => getLuckEntries(
+    getDrawOutcomes(games).filter(x => x.busted),
+    (a, b) => a - b,
+);
+
 export const getGameDurations = (
     games: GameResult[],
 ): GameDurationEntry[] => games
@@ -264,6 +461,69 @@ export const getPreviousPlayers = (
 //
 // helper funcs
 //
+
+// every draw that carried some risk of busting, with its bust chance and whether it busted
+const getDrawOutcomes = (
+    games: GameResult[],
+): { player: string; percent: number; busted: boolean }[] => games.flatMap(
+    game => game.cardDraws.flatMap(
+        (draw, i) => {
+            const before = game.cardDraws.slice(0, i);
+            const playerCards = (cards: CardDraw[]) => cards
+                .filter(x => x.player === draw.player && x.round === draw.round)
+                .map(x => x.card);
+
+            const chance = getBustChance(
+                getPlayerHand(playerCards(before)),
+                getCardsOutOfDeck(before),
+            );
+
+            return chance > 0
+                ? [{
+                    player: draw.player,
+                    percent: Math.round(chance * 100),
+                    busted: getPlayerHand(playerCards([...before, draw])).busted,
+                }]
+                : [];
+        }
+    )
+);
+
+// one entry per player at their most extreme percent, ordered by the given percent comparison
+const getLuckEntries = (
+    outcomes: { player: string; percent: number }[],
+    comparePercents: (a: number, b: number) => number,
+): LuckEntry[] => outcomes
+    .map(x => x.player)
+    .filter((x, i, a) => i === a.indexOf(x))
+    .map(
+        player => {
+            const mine = outcomes.filter(x => x.player === player);
+            const percent = mine
+                .map(x => x.percent)
+                .sort(comparePercents)[0];
+
+            return {
+                player,
+                percent,
+                times: mine.filter(x => x.percent === percent).length,
+            };
+        }
+    )
+    .sort(
+        (a, b) => (
+            comparePercents(a.percent, b.percent)
+            || b.times - a.times
+            || a.player.localeCompare(b.player)
+        )
+    )
+;
+
+// Object.keys turns numeric cards into strings, this restores them
+const parseCardKey = (key: string): FlipSevenCard => (
+    /^\d+$/.test(key) ? Number(key) as FlipSevenCard : key as FlipSevenCard
+);
+
 const getLeaderboarEntry = (
     games: GameResult[],
     player: string,
