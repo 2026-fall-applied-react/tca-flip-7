@@ -23,13 +23,14 @@ type PlayState = {
     order: string[];
     draws: CardDraw[];
     passed: string[];
-    expanded: string[];
+    expanded: string | null;
     picking: string | null;
 };
 
 type PlayAction =
     | { type: "move"; player: string; direction: -1 | 1 }
-    | { type: "toggleExpanded"; player: string }
+    | { type: "myTurn"; player: string }
+    | { type: "nextPlayer"; player: string }
     | { type: "togglePicking"; player: string }
     | { type: "draw"; player: string; card: FlipSevenCard; timestamp: string }
     | { type: "undoDraw"; player: string }
@@ -52,12 +53,12 @@ const reducer = (state: PlayState, action: PlayAction): PlayState => {
             [order[from], order[to]] = [order[to], order[from]];
             return { ...state, order };
         }
-        case "toggleExpanded":
-            return {
-                ...state,
-                expanded: toggleIn(state.expanded, action.player),
-                picking: state.picking === action.player ? null : state.picking,
-            };
+        case "myTurn":
+            return { ...state, expanded: action.player, picking: null };
+        case "nextPlayer": {
+            const next = state.order[(state.order.indexOf(action.player) + 1) % state.order.length];
+            return { ...state, expanded: next, picking: null };
+        }
         case "togglePicking":
             return {
                 ...state,
@@ -134,7 +135,7 @@ export const Play: React.FC<PlayProps> = ({
             order: players,
             draws: [],
             passed: [],
-            expanded: [],
+            expanded: null,
             picking: null,
         }),
     );
@@ -162,6 +163,17 @@ export const Play: React.FC<PlayProps> = ({
         });
         nav(-2);
     };
+
+    const gameTotals = currentPlayers.map(
+        player => ({
+            player,
+            total: rounds.reduce(
+                (acc, r) => acc + getPlayerHand(getRoundCards(player, r)).total,
+                0
+            ),
+        })
+    );
+    const topScore = Math.max(...gameTotals.map(x => x.total));
 
     //
     // return jsx...
@@ -191,7 +203,7 @@ export const Play: React.FC<PlayProps> = ({
                         const gameTotal = roundScores.reduce((acc, x) => acc + x, 0);
                         const passed = state.passed.includes(player);
                         const canDraw = !hand.busted && !passed;
-                        const expanded = state.expanded.includes(player);
+                        const expanded = state.expanded === player;
                         const picking = state.picking === player;
 
                         return (
@@ -226,11 +238,10 @@ export const Play: React.FC<PlayProps> = ({
                                         {passed && <span className="badge badge-neutral">Passed</span>}
                                         {hand.secondChance && <span className="badge badge-info">2nd Chance</span>}
                                         <button
-                                            className="btn btn-square btn-sm btn-outline"
-                                            aria-label={expanded ? `Collapse ${player}` : `Expand ${player}`}
-                                            onClick={() => dispatch({ type: "toggleExpanded", player })}
+                                            className={`btn btn-sm ${expanded ? "btn-primary" : "btn-outline"}`}
+                                            onClick={() => dispatch({ type: expanded ? "nextPlayer" : "myTurn", player })}
                                         >
-                                            {expanded ? "−" : "+"}
+                                            {expanded ? "Next" : "My Turn"}
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -363,16 +374,18 @@ export const Play: React.FC<PlayProps> = ({
                 </h2>
                 <div className="flex flex-col">
                     {
-                        currentPlayers.map(
-                            x => (
+                        gameTotals.map(
+                            ({ player: x, total }) => {
+                                return (
                                 <button
                                     key={x}
-                                    className="btn btn-primary btn-lg mt-3 w-full lg:w-64"
+                                    className={`btn btn-primary btn-lg mt-3 w-full lg:w-64 ${total === topScore ? "" : "btn-outline"}`}
                                     onClick={() => endGame(x)}
                                 >
-                                    {x} Won
+                                    {x} Won ({total})
                                 </button>
-                            )
+                                );
+                            }
                         )
                     }
                 </div>
